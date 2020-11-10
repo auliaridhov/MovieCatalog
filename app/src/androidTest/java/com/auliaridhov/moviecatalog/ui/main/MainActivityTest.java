@@ -34,6 +34,7 @@ public class MainActivityTest {
         onView(withId(R.id.rv_movie)).perform(RecyclerViewActions.scrollToPosition(dummyMovie.size()));
     }
 
+    //test github
     @Test
     public void loadDetailCourse() {
         onView(withId(R.id.rv_movie)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
