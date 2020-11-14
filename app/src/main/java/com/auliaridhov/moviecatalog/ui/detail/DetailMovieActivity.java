@@ -1,22 +1,18 @@
 package com.auliaridhov.moviecatalog.ui.detail;
 
-import androidx.annotation.NonNull;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.content.Intent;
+
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.auliaridhov.moviecatalog.R;
 import com.auliaridhov.moviecatalog.data.MoviesEntity;
-import com.auliaridhov.moviecatalog.ui.movies.MoviesViewModel;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
-
-import java.util.List;
 
 public class DetailMovieActivity extends AppCompatActivity {
 
