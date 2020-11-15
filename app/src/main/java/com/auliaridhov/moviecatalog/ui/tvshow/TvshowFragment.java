@@ -16,8 +16,10 @@ import android.widget.ProgressBar;
 
 import com.auliaridhov.moviecatalog.R;
 import com.auliaridhov.moviecatalog.data.MoviesEntity;
+import com.auliaridhov.moviecatalog.data.source.remote.response.ResultsItem;
 import com.auliaridhov.moviecatalog.ui.movies.MoviesAdapter;
 import com.auliaridhov.moviecatalog.ui.movies.MoviesViewModel;
+import com.auliaridhov.moviecatalog.viewmodel.ViewModelFactory;
 
 import java.util.List;
 
@@ -53,17 +55,22 @@ public class TvshowFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
 
-            TvshowViewModel viewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(TvshowViewModel.class);
-            List<MoviesEntity> tvshow = viewModel.getTvShow();
+            ViewModelFactory factory = ViewModelFactory.getInstance(getActivity());
+
+            TvshowViewModel viewModel = new ViewModelProvider(this, factory).get(TvshowViewModel.class);
+            viewModel.getTvShow().observe(this, courses -> {
+                progressBar.setVisibility(View.GONE);
+                TvshowAdapter tvshowAdapter = new TvshowAdapter();
+                tvshowAdapter.setTvShow(courses);
+
+                rvMovie.setLayoutManager(new LinearLayoutManager(getContext()));
+                rvMovie.setHasFixedSize(true);
+                rvMovie.setAdapter(tvshowAdapter);
+            });
 
 
             //List<CourseEntity> courses = DataDummy.generateDummyCourses();
-            TvshowAdapter tvshowAdapter = new TvshowAdapter();
-            tvshowAdapter.setTvShow(tvshow);
 
-            rvMovie.setLayoutManager(new LinearLayoutManager(getContext()));
-            rvMovie.setHasFixedSize(true);
-            rvMovie.setAdapter(tvshowAdapter);
         }
     }
 }

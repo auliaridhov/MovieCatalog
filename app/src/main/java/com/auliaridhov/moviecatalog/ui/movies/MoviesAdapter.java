@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.auliaridhov.moviecatalog.R;
 import com.auliaridhov.moviecatalog.data.MoviesEntity;
+import com.auliaridhov.moviecatalog.data.source.remote.response.ResultsItem;
 import com.auliaridhov.moviecatalog.ui.detail.DetailMovieActivity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -20,9 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
-    private List<MoviesEntity> listMovies = new ArrayList<>();
+    private List<ResultsItem> listMovies = new ArrayList<>();
 
-    void setCourses(List<MoviesEntity> movies) {
+    void setCourses(List<ResultsItem> movies) {
         if (movies == null) return;
         listMovies.clear();
         listMovies.addAll(movies);
@@ -37,7 +38,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     @Override
     public void onBindViewHolder(@NonNull final MovieViewHolder holder, int position) {
-        MoviesEntity movies = listMovies.get(position);
+        ResultsItem movies = listMovies.get(position);
         holder.bind(movies);
     }
 
@@ -58,18 +59,18 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
             tvDescription = itemView.findViewById(R.id.tv_item_description);
         }
 
-        void bind(final MoviesEntity movies) {
-            tvTitle.setText(movies.getTitle());
-            tvDescription.setText(movies.getDesc());
+        void bind(final ResultsItem movies) {
+            tvTitle.setText(movies.getOriginalTitle());
+            tvDescription.setText(movies.getOverview());
             //tvDate.setText(itemView.getResources().getString(R.string.deadline_date, course.getDeadline()));
             itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(itemView.getContext(), DetailMovieActivity.class);
                 intent.putExtra(DetailMovieActivity.EXTRA_FROM, "movie");
-                intent.putExtra(DetailMovieActivity.EXTRA_MOVIE, movies.getIdMovies());
+                intent.putExtra(DetailMovieActivity.EXTRA_MOVIE, String.valueOf(movies.getId()));
                 itemView.getContext().startActivity(intent);
             });
             Glide.with(itemView.getContext())
-                    .load(movies.getImg())
+                    .load("https://image.tmdb.org/t/p/w500"+movies.getPosterPath())
                     .apply(RequestOptions.placeholderOf(R.drawable.ic_loading).error(R.drawable.ic_error))
                     .into(imgPoster);
         }

@@ -1,31 +1,32 @@
 package com.auliaridhov.moviecatalog.ui.detail;
 
 
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-
-import android.os.Bundle;
-import android.widget.ImageView;
-import android.widget.TextView;
 import com.auliaridhov.moviecatalog.R;
-import com.auliaridhov.moviecatalog.data.MoviesEntity;
+import com.auliaridhov.moviecatalog.data.source.remote.response.ResultsItem;
+import com.auliaridhov.moviecatalog.viewmodel.ViewModelFactory;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
 
 public class DetailMovieActivity extends AppCompatActivity {
 
+    public static final String EXTRA_FROM = "movie_tv";
+    public static final String EXTRA_MOVIE = "extra_movie";
+    public static final String EXTRA_TV = "extra_tv";
     private TextView textTitle;
     private TextView textDesc;
     private TextView textDate;
     private TextView popularity;
     private ImageView imagePoster;
     private DetailMovieViewModel viewModel;
-
-    public static final String EXTRA_FROM = "movie_tv";
-    public static final String EXTRA_MOVIE = "extra_movie";
-    public static final String EXTRA_TV = "extra_tv";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,37 +41,33 @@ public class DetailMovieActivity extends AppCompatActivity {
         imagePoster = findViewById(R.id.ivPoster);
 
 
-
-        viewModel = new ViewModelProvider(this).get(DetailMovieViewModel.class);
+        ViewModelFactory factory = ViewModelFactory.getInstance(this);
+        viewModel = new ViewModelProvider(this, factory).get(DetailMovieViewModel.class);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            if (extras.getString(EXTRA_FROM).equals("movie")){
-                String courseId = extras.getString(EXTRA_MOVIE);
-                if (courseId != null) {
-                    viewModel.setSelectedCourse(courseId);
-                    populateCourse(viewModel.getMovies());
-                }
+
+            String courseId = extras.getString(EXTRA_MOVIE);
+            String from = extras.getString(EXTRA_FROM);
+            if (courseId != null) {
+                viewModel.setSelectedCourse(from, courseId);
+                viewModel.getDetail().observe(this, this::populateCourse);
+
             }
-            if (extras.getString(EXTRA_FROM).equals("tv")){
-                String courseId = extras.getString(EXTRA_TV);
-                if (courseId != null) {
-                    viewModel.setSelectedCourse(courseId);
-                    populateCourse(viewModel.getTV());
-                }
-            }
+
+
         }
 
     }
 
-    private void populateCourse(MoviesEntity movies) {
+    private void populateCourse(ResultsItem movies) {
         textTitle.setText(movies.getTitle());
-        textDesc.setText(movies.getDesc());
-        textDate.setText(movies.getDate());
-        popularity.setText(movies.getPopularity());
+        textDesc.setText(movies.getOverview());
+        textDate.setText(movies.getReleaseDate());
+        popularity.setText(String.valueOf(movies.getPopularity()));
 
         Glide.with(this)
-                .load(movies.getImg())
+                .load("https://image.tmdb.org/t/p/w500"+movies.getPosterPath())
                 .apply(RequestOptions.placeholderOf(R.drawable.ic_loading)
                         .error(R.drawable.ic_error))
                 .into(imagePoster);

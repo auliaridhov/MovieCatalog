@@ -1,6 +1,10 @@
 package com.auliaridhov.moviecatalog.ui.movies;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,15 +13,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ProgressBar;
-
 import com.auliaridhov.moviecatalog.R;
-import com.auliaridhov.moviecatalog.data.MoviesEntity;
-
-import java.util.List;
+import com.auliaridhov.moviecatalog.viewmodel.ViewModelFactory;
 
 public class MoviesFragment extends Fragment {
 
@@ -44,22 +41,28 @@ public class MoviesFragment extends Fragment {
         rvMovie = view.findViewById(R.id.rv_movie);
         progressBar = view.findViewById(R.id.progress_bar);
     }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
 
-            MoviesViewModel viewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(MoviesViewModel.class);
-            List<MoviesEntity> courses = viewModel.getMovies();
+            ViewModelFactory factory = ViewModelFactory.getInstance(getActivity());
 
+            MoviesViewModel viewModel = new ViewModelProvider(this, factory).get(MoviesViewModel.class);
+            viewModel.getMovies().observe(this, courses -> {
+                        progressBar.setVisibility(View.GONE);
+                        MoviesAdapter moviesAdapter = new MoviesAdapter();
+                        moviesAdapter.setCourses(courses);
+
+                        rvMovie.setLayoutManager(new LinearLayoutManager(getContext()));
+                        rvMovie.setHasFixedSize(true);
+                        rvMovie.setAdapter(moviesAdapter);
+                    }
+            );
 
             //List<CourseEntity> courses = DataDummy.generateDummyCourses();
-            MoviesAdapter moviesAdapter = new MoviesAdapter();
-            moviesAdapter.setCourses(courses);
 
-            rvMovie.setLayoutManager(new LinearLayoutManager(getContext()));
-            rvMovie.setHasFixedSize(true);
-            rvMovie.setAdapter(moviesAdapter);
         }
     }
 }
