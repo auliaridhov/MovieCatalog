@@ -39,6 +39,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation "androidx.lifecycle:lifecycle-viewmodel:$archLifecycleVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
 
     //testing
     testImplementation "junit:junit:$junitVersion"
@@ -46,6 +47,7 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
     androidTestImplementation "androidx.test.espresso:espresso-contrib:$espressoVersion"
     androidTestImplementation "androidx.test:rules:$androidXTestVersion"
+    testImplementation "androidx.arch.core:core-testing:$archLifecycleVersions"
 
     //retrofit
     implementation 'com.github.bumptech.glide:glide:4.11.0'

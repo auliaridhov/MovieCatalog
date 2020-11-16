@@ -19,6 +19,7 @@ public class MovieRepository implements MovieDataSource {
         this.remoteDataSource = remoteDataSource;
     }
 
+
     public static MovieRepository getInstance(RemoteDataSource remoteData) {
         if (INSTANCE == null) {
             synchronized (MovieRepository.class) {
@@ -32,7 +33,6 @@ public class MovieRepository implements MovieDataSource {
 
     @Override
     public LiveData<List<ResultsItem>> getAllMovie(String movie) {
-        //return remoteDataSource.getList();
         MutableLiveData<List<ResultsItem>> courseResults = new MutableLiveData<>();
         remoteDataSource.getList(movie, movieResponses -> {
             ArrayList<ResultsItem> courseList = new ArrayList<>();
@@ -106,7 +106,6 @@ public class MovieRepository implements MovieDataSource {
         MutableLiveData<ResultsItem> moduleResult = new MutableLiveData<>();
         remoteDataSource.getDetail(movie, idMovie, moduleResponses -> {
             ResultsItem resultsItem;
-
             resultsItem = new ResultsItem(moduleResponses.getOverview(),
                     moduleResponses.getOriginalLanguage(),
                     moduleResponses.getOriginalTitle(),

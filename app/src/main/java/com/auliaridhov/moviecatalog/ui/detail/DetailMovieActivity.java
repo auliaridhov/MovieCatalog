@@ -4,6 +4,8 @@ package com.auliaridhov.moviecatalog.ui.detail;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +29,8 @@ public class DetailMovieActivity extends AppCompatActivity {
     private TextView popularity;
     private ImageView imagePoster;
     private DetailMovieViewModel viewModel;
+    private ProgressBar progressBar;
+    private RelativeLayout relativeLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +44,11 @@ public class DetailMovieActivity extends AppCompatActivity {
 
         imagePoster = findViewById(R.id.ivPoster);
 
+        relativeLayout = findViewById(R.id.layout_detail);
+        progressBar = findViewById(R.id.progress_barr);
+
+        relativeLayout.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
 
         ViewModelFactory factory = ViewModelFactory.getInstance(this);
         viewModel = new ViewModelProvider(this, factory).get(DetailMovieViewModel.class);
@@ -50,9 +59,13 @@ public class DetailMovieActivity extends AppCompatActivity {
             String courseId = extras.getString(EXTRA_MOVIE);
             String from = extras.getString(EXTRA_FROM);
             if (courseId != null) {
-                viewModel.setSelectedCourse(from, courseId);
-                viewModel.getDetail().observe(this, this::populateCourse);
-
+                if (from.equals("movie")){
+                    viewModel.setSelectedCourse(from, courseId);
+                    viewModel.getDetail().observe(this, this::populateMovie);
+                } else {
+                    viewModel.setSelectedCourse(from, courseId);
+                    viewModel.getDetail().observe(this, this::populateTv);
+                }
             }
 
 
@@ -60,8 +73,24 @@ public class DetailMovieActivity extends AppCompatActivity {
 
     }
 
-    private void populateCourse(ResultsItem movies) {
+    private void populateMovie(ResultsItem movies) {
+        relativeLayout.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
         textTitle.setText(movies.getTitle());
+        textDesc.setText(movies.getOverview());
+        textDate.setText(movies.getReleaseDate());
+        popularity.setText(String.valueOf(movies.getPopularity()));
+
+        Glide.with(this)
+                .load("https://image.tmdb.org/t/p/w500"+movies.getPosterPath())
+                .apply(RequestOptions.placeholderOf(R.drawable.ic_loading)
+                        .error(R.drawable.ic_error))
+                .into(imagePoster);
+    }
+    private void populateTv(ResultsItem movies) {
+        relativeLayout.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
+        textTitle.setText(movies.getOriginalName());
         textDesc.setText(movies.getOverview());
         textDate.setText(movies.getReleaseDate());
         popularity.setText(String.valueOf(movies.getPopularity()));

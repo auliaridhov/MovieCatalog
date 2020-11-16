@@ -66,7 +66,7 @@ public class TvshowAdapter extends RecyclerView.Adapter<com.auliaridhov.moviecat
             itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(itemView.getContext(), DetailMovieActivity.class);
                 intent.putExtra(DetailMovieActivity.EXTRA_FROM, "tv");
-                intent.putExtra(DetailMovieActivity.EXTRA_TV, String.valueOf(movies.getId()));
+                intent.putExtra(DetailMovieActivity.EXTRA_MOVIE, String.valueOf(movies.getId()));
                 itemView.getContext().startActivity(intent);
             });
             Glide.with(itemView.getContext())
