@@ -1,12 +1,12 @@
 package com.auliaridhov.moviecatalog.ui.detail;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import com.auliaridhov.moviecatalog.data.MoviesEntity;
 import com.auliaridhov.moviecatalog.data.source.MovieRepository;
 import com.auliaridhov.moviecatalog.data.source.remote.response.ResultsItem;
-import com.auliaridhov.moviecatalog.utils.DataDummy;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -17,16 +17,17 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DetailMovieViewModelTest {
 
-    private DetailMovieViewModel viewModel;
-
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
-
+    private DetailMovieViewModel viewModel;
     @Mock
     private MovieRepository movieRepository;
 
@@ -42,31 +43,39 @@ public class DetailMovieViewModelTest {
     @Before
     public void setUp() {
         viewModel = new DetailMovieViewModel(movieRepository);
-        viewModel.setSelectedCourse("movie", "");
     }
 
-    @Test
+
     public void getMovies() {
-        viewModel.setSelectedCourse(dummyMovie.getIdMovies());
-        MoviesEntity moviesEntity = viewModel.getMovies();
-        assertNotNull(moviesEntity);
-        assertEquals(dummyMovie.getIdMovies(), moviesEntity.getIdMovies());
-        assertEquals(dummyMovie.getPopularity(), moviesEntity.getPopularity());
-        assertEquals(dummyMovie.getDate(), moviesEntity.getDate());
-        assertEquals(dummyMovie.getImg(), moviesEntity.getImg());
-        assertEquals(dummyMovie.getTitle(), moviesEntity.getTitle());
+        MutableLiveData<ResultsItem> course = new MutableLiveData<>();
+        viewModel.setSelectedCourse("movie", "524047");
+        ResultsItem resultsItem = viewModel.getDetail().getValue();
+        assertNotNull(resultsItem);
+        assertEquals("Greenland", resultsItem.getOriginalTitle());
+        assertEquals(String.valueOf(172.638), String.valueOf(resultsItem.getPopularity()));
+        assertEquals("/bNo2mcvSwIvnx8K6y1euAc1TLVq.jpg", resultsItem.getPosterPath());
+
+        course.setValue(resultsItem);
+        when(movieRepository.getDetailMovie("movie", "524047" )).thenReturn(course);
+        viewModel.getDetail().observeForever(observer);
+        verify(observer).onChanged(resultsItem);
     }
 
-    @Test
+
     public void getTV() {
-        viewModel.setSelectedCourse(dummyTv.getIdMovies());
-        MoviesEntity moviesEntity = viewModel.getTV();
-        assertNotNull(moviesEntity);
-        assertEquals(dummyTv.getIdMovies(), moviesEntity.getIdMovies());
-        assertEquals(dummyTv.getPopularity(), moviesEntity.getPopularity());
-        assertEquals(dummyTv.getDate(), moviesEntity.getDate());
-        assertEquals(dummyTv.getImg(), moviesEntity.getImg());
-        assertEquals(dummyTv.getTitle(), moviesEntity.getTitle());
+
+        MutableLiveData<ResultsItem> course = new MutableLiveData<>();
+        viewModel.setSelectedCourse("tv", "65494");
+        ResultsItem resultsItem = viewModel.getDetail().getValue();
+        assertNotNull(resultsItem);
+        assertEquals("Greenland", resultsItem.getOriginalTitle());
+        assertEquals(String.valueOf(172.638), String.valueOf(resultsItem.getPopularity()));
+        assertEquals("/bNo2mcvSwIvnx8K6y1euAc1TLVq.jpg", resultsItem.getPosterPath());
+
+        course.setValue(resultsItem);
+        when(movieRepository.getDetailMovie("movie", "524047" )).thenReturn(course);
+        viewModel.getDetail().observeForever(observer);
+        verify(observer).onChanged(resultsItem);
     }
 
 }
