@@ -4,10 +4,10 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
-import com.auliaridhov.moviecatalog.data.MoviesEntity;
 import com.auliaridhov.moviecatalog.data.source.MovieRepository;
 import com.auliaridhov.moviecatalog.data.source.remote.response.ResultsItem;
-import com.auliaridhov.moviecatalog.utils.DataDummy;
+import com.auliaridhov.moviecatalog.ui.utils.FakeDataDummy;
+import com.bumptech.glide.load.engine.Resource;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -16,12 +16,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -50,17 +50,25 @@ public class MoviesViewModelTest {
 //        assertNotNull(courseEntities);
 //        assertEquals(6, courseEntities.size());
 
+//        MutableLiveData<List<ResultsItem>> courses = new MutableLiveData<>();
+//        when(movieRepository.getAllMovie("movie")).thenReturn(courses);
+//        List<ResultsItem> moviesEntities = viewModel.getMovies().getValue();
+//        verify(movieRepository).getAllMovie("movie");
+//        assertNotNull(moviesEntities);
+//        assertEquals(5, moviesEntities.size());
 
+//        viewModel.getMovies().observeForever(observer);
+//        verify(observer).onChanged(moviesEntities);
+//===============================================================================================
 
-        MutableLiveData<List<ResultsItem>> courses = new MutableLiveData<>();
-        when(movieRepository.getAllMovie("movie")).thenReturn(courses);
-        List<ResultsItem> moviesEntities = viewModel.getMovies().getValue();
-        verify(movieRepository).getAllMovie("movie");
-        assertNotNull(moviesEntities);
-        assertEquals(5, moviesEntities.size());
+        List<ResultsItem> resource = FakeDataDummy.generateDummyMovies();
+        MutableLiveData<List<ResultsItem>> movies = new MutableLiveData<>();
+        movies.setValue(resource);
 
+        when(movieRepository.getAllMovie("movie")).thenReturn(movies);
+        //Observer<Resource<List<ResultsItem>>> observer = mock(Observer.class);
         viewModel.getMovies().observeForever(observer);
-//        verify(observer).onChanged(dummyCourses);
+        verify(observer).onChanged(resource);
 
     }
 }

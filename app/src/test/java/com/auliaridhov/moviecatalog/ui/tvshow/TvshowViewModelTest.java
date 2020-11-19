@@ -8,6 +8,7 @@ import com.auliaridhov.moviecatalog.data.MoviesEntity;
 import com.auliaridhov.moviecatalog.data.source.MovieRepository;
 import com.auliaridhov.moviecatalog.data.source.remote.response.ResultsItem;
 import com.auliaridhov.moviecatalog.ui.movies.MoviesViewModel;
+import com.auliaridhov.moviecatalog.ui.utils.FakeDataDummy;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -43,13 +44,23 @@ public class TvshowViewModelTest {
 //        assertNotNull(courseEntities);
 //        assertEquals(5, courseEntities.size());
 
-        MutableLiveData<List<ResultsItem>> courses = new MutableLiveData<>();
-        when(movieRepository.getAllMovie("movie")).thenReturn(courses);
-        List<ResultsItem> moviesEntities = viewModel.getTvShow().getValue();
-        verify(movieRepository).getAllMovie("movie");
-        assertNotNull(moviesEntities);
-        assertEquals(5, moviesEntities.size());
+//        MutableLiveData<List<ResultsItem>> courses = new MutableLiveData<>();
+//        when(movieRepository.getAllMovie("movie")).thenReturn(courses);
+//        List<ResultsItem> moviesEntities = viewModel.getTvShow().getValue();
+//        verify(movieRepository).getAllMovie("movie");
+//        assertNotNull(moviesEntities);
+//        assertEquals(5, moviesEntities.size());
 
+//        viewModel.getTvShow().observeForever(observer);
+//===========================================================================================
+
+        List<ResultsItem> resource = FakeDataDummy.generateDummyMovies();
+        MutableLiveData<List<ResultsItem>> movies = new MutableLiveData<>();
+        movies.setValue(resource);
+
+        when(movieRepository.getAllTv("tv")).thenReturn(movies);
+        //Observer<Resource<List<ResultsItem>>> observer = mock(Observer.class);
         viewModel.getTvShow().observeForever(observer);
+        verify(observer).onChanged(resource);
     }
 }

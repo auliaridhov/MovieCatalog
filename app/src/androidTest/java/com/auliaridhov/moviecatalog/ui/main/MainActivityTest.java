@@ -1,12 +1,16 @@
 package com.auliaridhov.moviecatalog.ui.main;
 
+import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.rule.ActivityTestRule;
 
 import com.auliaridhov.moviecatalog.R;
 import com.auliaridhov.moviecatalog.data.MoviesEntity;
 import com.auliaridhov.moviecatalog.utils.DataDummy;
+import com.auliaridhov.moviecatalog.utils.EspressoIdlingResource;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -27,6 +31,15 @@ public class MainActivityTest {
 
     @Rule
     public ActivityTestRule activityRule = new ActivityTestRule<>(MainActivity.class);
+
+    @Before
+    public void setUp() {
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.getEspressoIdlingResource());
+    }
+    @After
+    public void tearDown() {
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.getEspressoIdlingResource());
+    }
 
     @Test
     public void loadCourses() {

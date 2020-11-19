@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.auliaridhov.moviecatalog.data.source.remote.response.ApiConfig;
 import com.auliaridhov.moviecatalog.data.source.remote.response.MovieResponse;
 import com.auliaridhov.moviecatalog.data.source.remote.response.ResultsItem;
+import com.auliaridhov.moviecatalog.utils.EspressoIdlingResource;
 import com.auliaridhov.moviecatalog.utils.JsonHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -43,6 +44,7 @@ public class RemoteDataSource {
     }
 
     public void getList(String type, LoadMovieCallback callback) {
+        EspressoIdlingResource.increment();
         Call<MovieResponse> client = ApiConfig.getApiService().getMovies(type);
         client.enqueue(new Callback<MovieResponse>() {
             @Override
@@ -50,6 +52,7 @@ public class RemoteDataSource {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         _listMovies = response.body().getResults();
+                        EspressoIdlingResource.decrement();
                     }
                 } else {
                     Log.e(TAG, "onFailure: ${response.message()}");
@@ -65,6 +68,7 @@ public class RemoteDataSource {
     }
 
     public void getListTv(String type, LoadTvCallback callback) {
+        EspressoIdlingResource.increment();
         Call<MovieResponse> client = ApiConfig.getApiService().getMovies(type);
         client.enqueue(new Callback<MovieResponse>() {
             @Override
@@ -72,6 +76,7 @@ public class RemoteDataSource {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         _listMoviesTv = response.body().getResults();
+                        EspressoIdlingResource.decrement();
                     }
                 } else {
                     Log.e(TAG, "onFailure: ${response.message()}");
@@ -87,6 +92,7 @@ public class RemoteDataSource {
     }
 
     public void getDetail(String type, String id, LoadDetailCallback callback) {
+        EspressoIdlingResource.increment();
         Call<ResultsItem> client = ApiConfig.getApiService().getDetail(type, id);
         client.enqueue(new Callback<ResultsItem>() {
             @Override
@@ -94,6 +100,7 @@ public class RemoteDataSource {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         _detail = response.body();
+                        EspressoIdlingResource.decrement();
                     }
                 } else {
                     Log.e(TAG, "onFailure: ${response.message()}");
