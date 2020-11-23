@@ -22,7 +22,7 @@ import retrofit2.Response;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
-public class RemoteDataSource {
+public class    RemoteDataSource {
 
     private static RemoteDataSource INSTANCE;
     private JsonHelper jsonHelper;
@@ -100,7 +100,7 @@ public class RemoteDataSource {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         _detail = response.body();
-                        EspressoIdlingResource.decrement();
+
                     }
                 } else {
                     Log.e(TAG, "onFailure: ${response.message()}");
@@ -112,7 +112,10 @@ public class RemoteDataSource {
                 Log.e(TAG, "onFailure: " + t.getMessage());
             }
         });
-        handler.postDelayed(()-> callback.onDetailReceived(_detail), SERVICE_LATENCY_IN_MILLIS);
+        handler.postDelayed(()-> {
+            callback.onDetailReceived(_detail);
+            EspressoIdlingResource.decrement();
+            }, SERVICE_LATENCY_IN_MILLIS);
     }
 
     public interface LoadMovieCallback {

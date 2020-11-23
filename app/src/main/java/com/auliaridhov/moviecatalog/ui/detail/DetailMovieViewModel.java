@@ -32,6 +32,4 @@ public class DetailMovieViewModel extends ViewModel {
 
 
 
-
-
 }

@@ -42,7 +42,7 @@ public class MainActivityTest {
     }
 
     @Test
-    public void loadCourses() {
+    public void loadMovie() {
         onView(withId(R.id.rv_movie)).check(matches(isDisplayed()));
         onView(withId(R.id.rv_movie)).perform(RecyclerViewActions.scrollToPosition(dummyMovie.size()));
     }
@@ -59,7 +59,7 @@ public class MainActivityTest {
 
 
     @Test
-    public void loadBookmarks() {
+    public void loadTVShow() {
         onView(withText("TV Show")).perform(click());
         onView(withId(R.id.rv_tv)).check(matches(isDisplayed()));
         onView(withId(R.id.rv_tv)).perform(RecyclerViewActions.scrollToPosition(dummyTv.size()));

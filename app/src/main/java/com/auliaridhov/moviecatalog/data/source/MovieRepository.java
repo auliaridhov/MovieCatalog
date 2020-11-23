@@ -18,8 +18,6 @@ public class MovieRepository implements MovieDataSource {
     private MovieRepository(@NonNull RemoteDataSource remoteDataSource) {
         this.remoteDataSource = remoteDataSource;
     }
-
-
     public static MovieRepository getInstance(RemoteDataSource remoteData) {
         if (INSTANCE == null) {
             synchronized (MovieRepository.class) {
@@ -30,7 +28,6 @@ public class MovieRepository implements MovieDataSource {
         }
         return INSTANCE;
     }
-
     @Override
     public LiveData<List<ResultsItem>> getAllMovie(String movie) {
         MutableLiveData<List<ResultsItem>> courseResults = new MutableLiveData<>();
@@ -60,19 +57,34 @@ public class MovieRepository implements MovieDataSource {
         });
         return courseResults;
     }
-
     @Override
     public LiveData<ResultsItem> getDetailMovie(String movie, String idMovie) {
         MutableLiveData<ResultsItem> moduleResult = new MutableLiveData<>();
         remoteDataSource.getDetail(movie, idMovie, moduleResponses -> {
-            remoteDataSource.getDetail(movie, idMovie, moduleResult::postValue);
+            ResultsItem resultsItem;
+            resultsItem = new ResultsItem(moduleResponses.getOverview(),
+                    moduleResponses.getOriginalLanguage(),
+                    moduleResponses.getOriginalTitle(),
+                    moduleResponses.isVideo(),
+                    moduleResponses.getTitle(),
+                    moduleResponses.getGenreIds(),
+                    moduleResponses.getPosterPath(),
+                    moduleResponses.getBackdropPath(),
+                    moduleResponses.getReleaseDate(),
+                    moduleResponses.getMediaType(),
+                    moduleResponses.getVoteAverage(),
+                    moduleResponses.getPopularity(),
+                    moduleResponses.getId(),
+                    moduleResponses.isAdult(),
+                    moduleResponses.getVoteCount(),
+                    moduleResponses.getOriginalName());
+
+            moduleResult.postValue(resultsItem);
         });
         return moduleResult;
     }
-
     @Override
     public LiveData<List<ResultsItem>> getAllTv(String tv) {
-        //return remoteDataSource.getList();
         MutableLiveData<List<ResultsItem>> courseResults = new MutableLiveData<>();
         remoteDataSource.getListTv(tv, movieResponses -> {
             ArrayList<ResultsItem> courseList = new ArrayList<>();

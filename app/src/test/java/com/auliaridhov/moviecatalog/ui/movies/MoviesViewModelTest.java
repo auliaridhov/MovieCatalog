@@ -17,11 +17,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
-
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -46,27 +41,10 @@ public class MoviesViewModelTest {
 
     @Test
     public void getMovies() {
-//        List<ResultsItem> courseEntities = viewModel.getMovies();
-//        assertNotNull(courseEntities);
-//        assertEquals(6, courseEntities.size());
-
-//        MutableLiveData<List<ResultsItem>> courses = new MutableLiveData<>();
-//        when(movieRepository.getAllMovie("movie")).thenReturn(courses);
-//        List<ResultsItem> moviesEntities = viewModel.getMovies().getValue();
-//        verify(movieRepository).getAllMovie("movie");
-//        assertNotNull(moviesEntities);
-//        assertEquals(5, moviesEntities.size());
-
-//        viewModel.getMovies().observeForever(observer);
-//        verify(observer).onChanged(moviesEntities);
-//===============================================================================================
-
         List<ResultsItem> resource = FakeDataDummy.generateDummyMovies();
         MutableLiveData<List<ResultsItem>> movies = new MutableLiveData<>();
         movies.setValue(resource);
-
         when(movieRepository.getAllMovie("movie")).thenReturn(movies);
-        //Observer<Resource<List<ResultsItem>>> observer = mock(Observer.class);
         viewModel.getMovies().observeForever(observer);
         verify(observer).onChanged(resource);
 
