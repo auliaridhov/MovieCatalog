@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.auliaridhov.moviecatalog.R;
 import com.auliaridhov.moviecatalog.data.source.remote.response.ResultsItem;
+import com.auliaridhov.moviecatalog.utils.EspressoIdlingResource;
 import com.auliaridhov.moviecatalog.viewmodel.ViewModelFactory;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -36,6 +37,8 @@ public class DetailMovieActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_movie);
+
+        EspressoIdlingResource.increment();
 
         textTitle = findViewById(R.id.detailTitle);
         textDesc = findViewById(R.id.descDetail);
@@ -66,6 +69,8 @@ public class DetailMovieActivity extends AppCompatActivity {
                     viewModel.setSelectedCourse(from, courseId);
                     viewModel.getDetail().observe(this, this::populateTv);
                 }
+
+
             }
 
 
@@ -74,6 +79,7 @@ public class DetailMovieActivity extends AppCompatActivity {
     }
 
     private void populateMovie(ResultsItem movies) {
+
         relativeLayout.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
         textTitle.setText(movies.getTitle());
@@ -86,8 +92,13 @@ public class DetailMovieActivity extends AppCompatActivity {
                 .apply(RequestOptions.placeholderOf(R.drawable.ic_loading)
                         .error(R.drawable.ic_error))
                 .into(imagePoster);
+
+        if (!EspressoIdlingResource.getEspressoIdlingResource().isIdleNow()) {
+            EspressoIdlingResource.decrement();
+        }
     }
     private void populateTv(ResultsItem movies) {
+
         relativeLayout.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
         textTitle.setText(movies.getOriginalName());
@@ -100,5 +111,8 @@ public class DetailMovieActivity extends AppCompatActivity {
                 .apply(RequestOptions.placeholderOf(R.drawable.ic_loading)
                         .error(R.drawable.ic_error))
                 .into(imagePoster);
+        if (!EspressoIdlingResource.getEspressoIdlingResource().isIdleNow()) {
+            EspressoIdlingResource.decrement();
+        }
     }
 }

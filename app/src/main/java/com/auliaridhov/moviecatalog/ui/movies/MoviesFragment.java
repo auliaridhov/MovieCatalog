@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.auliaridhov.moviecatalog.R;
+import com.auliaridhov.moviecatalog.utils.EspressoIdlingResource;
 import com.auliaridhov.moviecatalog.viewmodel.ViewModelFactory;
 
 public class MoviesFragment extends Fragment {
@@ -47,17 +48,26 @@ public class MoviesFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
 
+            EspressoIdlingResource.increment();
+
             ViewModelFactory factory = ViewModelFactory.getInstance(getActivity());
+
 
             MoviesViewModel viewModel = new ViewModelProvider(this, factory).get(MoviesViewModel.class);
             viewModel.getMovies().observe(this, courses -> {
                         progressBar.setVisibility(View.GONE);
                         MoviesAdapter moviesAdapter = new MoviesAdapter();
+
                         moviesAdapter.setCourses(courses);
+                        moviesAdapter.notifyDataSetChanged();
 
                         rvMovie.setLayoutManager(new LinearLayoutManager(getContext()));
                         rvMovie.setHasFixedSize(true);
                         rvMovie.setAdapter(moviesAdapter);
+
+                        if (!EspressoIdlingResource.getEspressoIdlingResource().isIdleNow()) {
+                            EspressoIdlingResource.decrement();
+                        }
                     }
             );
 

@@ -19,6 +19,7 @@ import com.auliaridhov.moviecatalog.data.MoviesEntity;
 import com.auliaridhov.moviecatalog.data.source.remote.response.ResultsItem;
 import com.auliaridhov.moviecatalog.ui.movies.MoviesAdapter;
 import com.auliaridhov.moviecatalog.ui.movies.MoviesViewModel;
+import com.auliaridhov.moviecatalog.utils.EspressoIdlingResource;
 import com.auliaridhov.moviecatalog.viewmodel.ViewModelFactory;
 
 import java.util.List;
@@ -55,6 +56,8 @@ public class TvshowFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
 
+            EspressoIdlingResource.increment();
+
             ViewModelFactory factory = ViewModelFactory.getInstance(getActivity());
 
             TvshowViewModel viewModel = new ViewModelProvider(this, factory).get(TvshowViewModel.class);
@@ -66,6 +69,10 @@ public class TvshowFragment extends Fragment {
                 rvMovie.setLayoutManager(new LinearLayoutManager(getContext()));
                 rvMovie.setHasFixedSize(true);
                 rvMovie.setAdapter(tvshowAdapter);
+
+                if (!EspressoIdlingResource.getEspressoIdlingResource().isIdleNow()) {
+                    EspressoIdlingResource.decrement();
+                }
             });
 
 

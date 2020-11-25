@@ -23,14 +23,13 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.*;
 
 public class MainActivityTest {
-    private List<MoviesEntity> dummyMovie = DataDummy.generateDummyMovies();
-    private List<MoviesEntity> dummyTv = DataDummy.generateDummyTvShow();
 
     @Rule
-    public ActivityTestRule activityRule = new ActivityTestRule<>(MainActivity.class);
+    public ActivityTestRule<MainActivity> activityRule = new ActivityTestRule<>(MainActivity.class);
 
     @Before
     public void setUp() {
@@ -41,28 +40,28 @@ public class MainActivityTest {
         IdlingRegistry.getInstance().unregister(EspressoIdlingResource.getEspressoIdlingResource());
     }
 
+
+
     @Test
     public void loadMovie() {
+
         onView(withId(R.id.rv_movie)).check(matches(isDisplayed()));
-        onView(withId(R.id.rv_movie)).perform(RecyclerViewActions.scrollToPosition(dummyMovie.size()));
     }
-
-    //test github
-    @Test
-    public void loadDetailCourse() {
-        onView(withId(R.id.rv_movie)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-        onView(withId(R.id.detailTitle)).check(matches(isDisplayed()));
-        onView(withId(R.id.detailTitle)).check(matches(withText(dummyMovie.get(0).getTitle())));
-        onView(withId(R.id.descDetail)).check(matches(isDisplayed()));
-        onView(withId(R.id.dateDetail)).check(matches(isDisplayed()));
-    }
-
 
     @Test
     public void loadTVShow() {
+
         onView(withText("TV Show")).perform(click());
         onView(withId(R.id.rv_tv)).check(matches(isDisplayed()));
-        onView(withId(R.id.rv_tv)).perform(RecyclerViewActions.scrollToPosition(dummyTv.size()));
     }
+
+    @Test
+    public void loadDetailMovie() {
+        onView(withId(R.id.rv_movie)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        onView(withId(R.id.detailTitle)).check(matches(isDisplayed()));
+        onView(withId(R.id.detailTitle)).check(matches(isDisplayed()));
+        onView(withId(R.id.descDetail)).check(matches(isDisplayed()));
+    }
+
 
 }

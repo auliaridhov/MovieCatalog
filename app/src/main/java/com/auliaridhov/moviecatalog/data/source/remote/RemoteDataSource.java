@@ -27,7 +27,7 @@ public class    RemoteDataSource {
     private static RemoteDataSource INSTANCE;
     private JsonHelper jsonHelper;
     private Handler handler = new Handler();
-    private final long SERVICE_LATENCY_IN_MILLIS = 2000;
+    private final long SERVICE_LATENCY_IN_MILLIS = 3000;
     private List<ResultsItem> _listMovies = new ArrayList<ResultsItem>();
     private List<ResultsItem> _listMoviesTv = new ArrayList<ResultsItem>();
     private ResultsItem _detail = null;
@@ -44,7 +44,7 @@ public class    RemoteDataSource {
     }
 
     public void getList(String type, LoadMovieCallback callback) {
-        EspressoIdlingResource.increment();
+
         Call<MovieResponse> client = ApiConfig.getApiService().getMovies(type);
         client.enqueue(new Callback<MovieResponse>() {
             @Override
@@ -52,7 +52,7 @@ public class    RemoteDataSource {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         _listMovies = response.body().getResults();
-                        EspressoIdlingResource.decrement();
+
                     }
                 } else {
                     Log.e(TAG, "onFailure: ${response.message()}");
@@ -68,7 +68,7 @@ public class    RemoteDataSource {
     }
 
     public void getListTv(String type, LoadTvCallback callback) {
-        EspressoIdlingResource.increment();
+
         Call<MovieResponse> client = ApiConfig.getApiService().getMovies(type);
         client.enqueue(new Callback<MovieResponse>() {
             @Override
@@ -76,7 +76,7 @@ public class    RemoteDataSource {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         _listMoviesTv = response.body().getResults();
-                        EspressoIdlingResource.decrement();
+
                     }
                 } else {
                     Log.e(TAG, "onFailure: ${response.message()}");
@@ -92,7 +92,7 @@ public class    RemoteDataSource {
     }
 
     public void getDetail(String type, String id, LoadDetailCallback callback) {
-        EspressoIdlingResource.increment();
+
         Call<ResultsItem> client = ApiConfig.getApiService().getDetail(type, id);
         client.enqueue(new Callback<ResultsItem>() {
             @Override
@@ -100,6 +100,7 @@ public class    RemoteDataSource {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         _detail = response.body();
+
 
                     }
                 } else {
@@ -112,10 +113,9 @@ public class    RemoteDataSource {
                 Log.e(TAG, "onFailure: " + t.getMessage());
             }
         });
-        handler.postDelayed(()-> {
-            callback.onDetailReceived(_detail);
-            EspressoIdlingResource.decrement();
-            }, SERVICE_LATENCY_IN_MILLIS);
+        handler.postDelayed(()->
+            callback.onDetailReceived(_detail)
+            , SERVICE_LATENCY_IN_MILLIS);
     }
 
     public interface LoadMovieCallback {
