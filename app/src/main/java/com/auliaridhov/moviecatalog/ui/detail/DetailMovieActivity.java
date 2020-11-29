@@ -29,7 +29,6 @@ public class DetailMovieActivity extends AppCompatActivity {
     private TextView textDate;
     private TextView popularity;
     private ImageView imagePoster;
-    private DetailMovieViewModel viewModel;
     private ProgressBar progressBar;
     private RelativeLayout relativeLayout;
 
@@ -54,7 +53,7 @@ public class DetailMovieActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
 
         ViewModelFactory factory = ViewModelFactory.getInstance(this);
-        viewModel = new ViewModelProvider(this, factory).get(DetailMovieViewModel.class);
+        DetailMovieViewModel viewModel = new ViewModelProvider(this, factory).get(DetailMovieViewModel.class);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {

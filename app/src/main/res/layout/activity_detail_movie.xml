@@ -1,35 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.detail.DetailMovieActivity">
-
-
-
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-
-
+        android:layout_height="match_parent"
+        android:orientation="vertical">
         <RelativeLayout
             android:id="@+id/layout_detail"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-
             <androidx.cardview.widget.CardView
                 android:id="@+id/cv1"
                 android:layout_width="100dp"
                 android:layout_height="130dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="20dp">
-
                 <ImageView
                     android:id="@+id/ivPoster"
+                    android:contentDescription="@string/image_poster"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop" />
@@ -56,13 +47,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Popularity" />
+                    android:text="@string/popularity" />
 
                 <TextView
                     android:id="@+id/popularity"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="214" />
+                  />
 
 
             </LinearLayout>
@@ -79,7 +70,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Overview" />
+                    android:text="@string/overview" />
 
                 <TextView
                     android:id="@+id/descDetail"
@@ -93,13 +84,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Date" />
+                    android:text="@string/date" />
 
                 <TextView
                     android:id="@+id/dateDetail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="0000-00-00" />
+                />
 
 
             </LinearLayout>
@@ -108,11 +99,10 @@
         </RelativeLayout>
 
         <ProgressBar
-            android:layout_gravity="center"
             android:id="@+id/progress_barr"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
 
 
     </LinearLayout>

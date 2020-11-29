@@ -6,4 +6,8 @@
     <string name="tvshow">TV Show</string>
     <string name="title">Title</string>
     <string name="description">Description</string>
+    <string name="popularity">Popularity</string>
+    <string name="overview">Overview</string>
+    <string name="date">Date</string>
+    <string name="image_poster">Image poster</string>
 </resources>

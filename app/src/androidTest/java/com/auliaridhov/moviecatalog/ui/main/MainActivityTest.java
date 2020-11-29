@@ -40,17 +40,13 @@ public class MainActivityTest {
         IdlingRegistry.getInstance().unregister(EspressoIdlingResource.getEspressoIdlingResource());
     }
 
-
-
     @Test
     public void loadMovie() {
-
         onView(withId(R.id.rv_movie)).check(matches(isDisplayed()));
     }
 
     @Test
     public void loadTVShow() {
-
         onView(withText("TV Show")).perform(click());
         onView(withId(R.id.rv_tv)).check(matches(isDisplayed()));
     }

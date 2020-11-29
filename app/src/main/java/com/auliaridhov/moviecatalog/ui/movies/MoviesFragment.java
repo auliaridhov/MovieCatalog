@@ -18,14 +18,12 @@ import com.auliaridhov.moviecatalog.utils.EspressoIdlingResource;
 import com.auliaridhov.moviecatalog.viewmodel.ViewModelFactory;
 
 public class MoviesFragment extends Fragment {
-
     private RecyclerView rvMovie;
     private ProgressBar progressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
