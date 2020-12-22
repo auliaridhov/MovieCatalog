@@ -34,6 +34,8 @@ ext {
     recyclerViewVersion = '1.1.0'
     glideVersion = '4.10.0'
     archLifecycleVersions = '2.1.0'
+    roomVersion = '2.2.3'
+    roomRuntimeVersion = '2.2.5'
 
 }
 
