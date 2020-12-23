@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.auliaridhov.moviecatalog.R;
 import com.auliaridhov.moviecatalog.data.MoviesEntity;
+import com.auliaridhov.moviecatalog.data.source.local.entity.MovieLocalEntity;
 import com.auliaridhov.moviecatalog.data.source.remote.response.ResultsItem;
 import com.auliaridhov.moviecatalog.ui.detail.DetailMovieActivity;
 import com.bumptech.glide.Glide;
@@ -21,9 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
-    private List<ResultsItem> listMovies = new ArrayList<>();
+    private List<MovieLocalEntity> listMovies = new ArrayList<>();
 
-    void setCourses(List<ResultsItem> movies) {
+    public void setCourses(List<MovieLocalEntity> movies) {
         if (movies == null) return;
         listMovies.clear();
         listMovies.addAll(movies);
@@ -38,7 +39,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     @Override
     public void onBindViewHolder(@NonNull final MovieViewHolder holder, int position) {
-        ResultsItem movies = listMovies.get(position);
+        MovieLocalEntity movies = listMovies.get(position);
         holder.bind(movies);
     }
 
@@ -59,7 +60,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
             tvDescription = itemView.findViewById(R.id.tv_item_description);
         }
 
-        void bind(final ResultsItem movies) {
+        void bind(final MovieLocalEntity movies) {
             tvTitle.setText(movies.getOriginalTitle());
             tvDescription.setText(movies.getOverview());
             //tvDate.setText(itemView.getResources().getString(R.string.deadline_date, course.getDeadline()));

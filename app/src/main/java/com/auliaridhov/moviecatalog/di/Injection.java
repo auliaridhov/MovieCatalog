@@ -7,6 +7,8 @@ import com.auliaridhov.moviecatalog.data.source.MovieRepository;
 import com.auliaridhov.moviecatalog.data.source.local.LocalDataSource;
 import com.auliaridhov.moviecatalog.data.source.local.room.MovieDatabase;
 import com.auliaridhov.moviecatalog.data.source.remote.RemoteDataSource;
+import com.auliaridhov.moviecatalog.data.source.remote.response.ApiConfig;
+import com.auliaridhov.moviecatalog.data.source.remote.response.ApiService;
 import com.auliaridhov.moviecatalog.utils.AppExecutors;
 import com.auliaridhov.moviecatalog.utils.JsonHelper;
 
@@ -15,10 +17,10 @@ public class Injection {
 
         MovieDatabase database = MovieDatabase.getInstance(context);
 
-        RemoteDataSource remoteDataSource = RemoteDataSource.getInstance(new JsonHelper(context));
-        LocalDataSource localDataSource = LocalDataSource.getInstance(database.movieDao());
-        AppExecutors appExecutors = new AppExecutors();
 
+        LocalDataSource localDataSource = LocalDataSource.getInstance(database.movieDao());
+        RemoteDataSource remoteDataSource = RemoteDataSource.getInstance(ApiConfig.getApiService());
+        AppExecutors appExecutors = new AppExecutors();
         return MovieRepository.getInstance(remoteDataSource, localDataSource, appExecutors);
     }
 }

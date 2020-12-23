@@ -5,6 +5,7 @@ import android.graphics.Movie;
 import androidx.lifecycle.LiveData;
 
 import com.auliaridhov.moviecatalog.data.source.local.entity.MovieLocalEntity;
+import com.auliaridhov.moviecatalog.data.source.local.entity.TvShowLocalEntity;
 import com.auliaridhov.moviecatalog.data.source.local.room.MovieDao;
 
 import java.util.List;
@@ -29,41 +30,50 @@ public class LocalDataSource {
         return mMovieDao.getMovie();
     }
 
+//    public DataSource.Factory<Integer, MovieEntity> getFavMoviesPaged() {
+//        return catalogDao.getFavMoviesAsPaged();
+//    }
+
     public LiveData<List<MovieLocalEntity>> getFavoritedMovie() {
         return mMovieDao.getFavorited();
     }
-//
-//    public LiveData<CourseWithModule> getCourseWithModules(final String courseId) {
-//        return mAcademyDao.getCourseWithModuleById(courseId);
-//    }
 
-//    public LiveData<List<ModuleEntity>> getAllModulesByCourse(String courseId) {
-//        return mAcademyDao.getModulesByCourseId(courseId);
-//    }
-
-    public void insertCourses(List<MovieLocalEntity> movies) {
-        mMovieDao.insertMovie(movies);
+    public LiveData<MovieLocalEntity> getMovieDetail(String id) {
+        return mMovieDao.getMovieById(id);
     }
 
-//    public void insertModules(List<MovieLocalEntity> movies) {
-//        mMovieDao.insertModules(modules);
-//    }
-
-    public void setMovieFavorited(MovieLocalEntity movie, boolean newState) {
-        movie.setFavorited(newState);
-        mMovieDao.updateMovie(movie);
+    public void insertMovies(List<MovieLocalEntity> movieEntities) {
+        mMovieDao.insertMovie(movieEntities);
     }
 
-//    public LiveData<ModuleEntity> getModuleWithContent(String moduleId) {
-//        return mAcademyDao.getModuleById(moduleId);
+    public void setMovieFavorite(MovieLocalEntity movieEntity, boolean state) {
+        movieEntity.setFavorited(state);
+        mMovieDao.updateMovie(movieEntity);
+
+    }
+
+    public LiveData<List<TvShowLocalEntity>> getAllTvShows() {
+        return mMovieDao.getTvShow();
+    }
+
+//    public DataSource.Factory<Integer, TvShowEntity> getFavTvShowsPaged() {
+//        return catalogDao.getFavTvShowAsPaged();
 //    }
-//
-//    public void updateContent(String content, String moduleId) {
-//        mAcademyDao.updateModuleByContent(content, moduleId);
-//    }
-//
-//    public void setReadModule(final ModuleEntity module) {
-//        module.setRead(true);
-//        mAcademyDao.updateModule(module);
-//    }
+
+    public LiveData<List<TvShowLocalEntity>> getFavoritedTv() {
+        return mMovieDao.getTvShowFavorited();
+    }
+
+    public LiveData<TvShowLocalEntity> getTvShowDetail(String id) {
+        return mMovieDao.getTvShowById(id);
+    }
+
+    public void insertTvShow(List<TvShowLocalEntity> tvShowEntities) {
+        mMovieDao.insertTvShow(tvShowEntities);
+    }
+
+    public void setTVFavorite(TvShowLocalEntity tvShowEntity, boolean state) {
+        tvShowEntity.setFavorited(state);
+        mMovieDao.updateTvShow(tvShowEntity);
+    }
 }

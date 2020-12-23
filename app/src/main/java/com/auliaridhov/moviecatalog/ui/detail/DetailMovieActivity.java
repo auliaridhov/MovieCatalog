@@ -7,16 +7,20 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.auliaridhov.moviecatalog.R;
+import com.auliaridhov.moviecatalog.data.source.local.entity.MovieLocalEntity;
+import com.auliaridhov.moviecatalog.data.source.local.entity.TvShowLocalEntity;
 import com.auliaridhov.moviecatalog.data.source.remote.response.ResultsItem;
 import com.auliaridhov.moviecatalog.utils.EspressoIdlingResource;
 import com.auliaridhov.moviecatalog.viewmodel.ViewModelFactory;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.snackbar.Snackbar;
 
 
 public class DetailMovieActivity extends AppCompatActivity {
@@ -31,6 +35,8 @@ public class DetailMovieActivity extends AppCompatActivity {
     private ImageView imagePoster;
     private ProgressBar progressBar;
     private RelativeLayout relativeLayout;
+    private ImageView imgFav;
+    private DetailMovieViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +49,7 @@ public class DetailMovieActivity extends AppCompatActivity {
         textDesc = findViewById(R.id.descDetail);
         textDate = findViewById(R.id.dateDetail);
         popularity = findViewById(R.id.popularity);
+        imgFav = findViewById(R.id.imgFav);
 
         imagePoster = findViewById(R.id.ivPoster);
 
@@ -53,7 +60,7 @@ public class DetailMovieActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
 
         ViewModelFactory factory = ViewModelFactory.getInstance(this);
-        DetailMovieViewModel viewModel = new ViewModelProvider(this, factory).get(DetailMovieViewModel.class);
+        viewModel = new ViewModelProvider(this, factory).get(DetailMovieViewModel.class);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -62,11 +69,51 @@ public class DetailMovieActivity extends AppCompatActivity {
             String from = extras.getString(EXTRA_FROM);
             if (courseId != null) {
                 if (from.equals("movie")){
-                    viewModel.setSelectedCourse(from, courseId);
-                    viewModel.getDetail().observe(this, this::populateMovie);
+                    viewModel.setMovieId(courseId);
+                    viewModel.getMovieDetail.observe(this, movieDetail -> {
+                        if (movieDetail != null) {
+
+                            switch (movieDetail.status) {
+                                case SUCCESS:
+                                    if (movieDetail.data != null) {
+                                        progressBar.setVisibility(View.GONE);
+                                        populateMovie(movieDetail.data);
+                                        setFavoritesMovie(movieDetail.data);
+                                        break;
+                                    }
+                                case LOADING:
+                                    progressBar.setVisibility(View.VISIBLE);
+                                    break;
+                                case ERROR:
+                                    progressBar.setVisibility(View.GONE);
+                                    Toast.makeText(DetailMovieActivity.this, "Ada Kesalahan Pada Aplikasi", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 } else {
-                    viewModel.setSelectedCourse(from, courseId);
-                    viewModel.getDetail().observe(this, this::populateTv);
+//                    viewModel.setSelectedCourse(from, courseId);
+//                    viewModel.getDetail().observe(this, this::populateTv);
+                    viewModel.setTvId(courseId);
+                    viewModel.getTvDetail.observe(this, movieDetail -> {
+                        if (movieDetail != null) {
+
+                            switch (movieDetail.status) {
+                                case SUCCESS:
+                                    if (movieDetail.data != null) {
+                                        progressBar.setVisibility(View.GONE);
+                                        populateTv(movieDetail.data);
+                                        setFavoritesTv(movieDetail.data);
+                                        break;
+                                    }
+                                case LOADING:
+                                    progressBar.setVisibility(View.VISIBLE);
+                                    break;
+                                case ERROR:
+                                    progressBar.setVisibility(View.GONE);
+                                    Toast.makeText(DetailMovieActivity.this, "Ada Kesalahan Pada Aplikasi", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 }
 
 
@@ -77,7 +124,7 @@ public class DetailMovieActivity extends AppCompatActivity {
 
     }
 
-    private void populateMovie(ResultsItem movies) {
+    private void populateMovie(MovieLocalEntity movies) {
 
         relativeLayout.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
@@ -96,7 +143,7 @@ public class DetailMovieActivity extends AppCompatActivity {
             EspressoIdlingResource.decrement();
         }
     }
-    private void populateTv(ResultsItem movies) {
+    private void populateTv(TvShowLocalEntity movies) {
 
         relativeLayout.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
@@ -113,5 +160,81 @@ public class DetailMovieActivity extends AppCompatActivity {
         if (!EspressoIdlingResource.getEspressoIdlingResource().isIdleNow()) {
             EspressoIdlingResource.decrement();
         }
+    }
+
+    private void setFavoritesTv(TvShowLocalEntity tvShowEntity) {
+        if (tvShowEntity.isFavorited()) {
+            imgFav.setImageResource(R.drawable.ic_baseline_favorite_24);
+        }
+
+        viewModel.getTvDetail.observe(this, tvShow -> {
+            if (tvShow != null) {
+                switch (tvShow.status) {
+                    case SUCCESS:
+                        if (tvShow.data != null) {
+                            progressBar.setVisibility(View.GONE);
+                            boolean state = tvShow.data.isFavorited();
+                            imgFav.setOnClickListener(v -> {
+                                if (state) {
+                                    imgFav.setImageResource(R.drawable.ic_baseline_favorite_border_24);
+                                    Snackbar.make(imgFav, "Film Anda telah dihapus dari favorit", Snackbar.LENGTH_LONG).show();
+                                    viewModel.setFavoriteTv();
+                                } else {
+                                    imgFav.setImageResource(R.drawable.ic_baseline_favorite_24);
+                                    Snackbar.make(imgFav, "Film Anda telah ditambahkan ke favorit", Snackbar.LENGTH_LONG).show();
+                                    viewModel.setFavoriteTv();
+                                }
+                            });
+                        }
+                        break;
+                    case LOADING:
+                        progressBar.setVisibility(View.VISIBLE);
+                        break;
+                    case ERROR:
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(DetailMovieActivity.this, "Ada Kesalahan Pada Aplikasi", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        });
+
+    }
+
+    private void setFavoritesMovie(MovieLocalEntity movieLocalEntity) {
+        if (movieLocalEntity.isFavorited()) {
+            imgFav.setImageResource(R.drawable.ic_baseline_favorite_24);
+        }
+
+        viewModel.getMovieDetail.observe(this, tvShow -> {
+            if (tvShow != null) {
+                switch (tvShow.status) {
+                    case SUCCESS:
+                        if (tvShow.data != null) {
+                            progressBar.setVisibility(View.GONE);
+                            boolean state = tvShow.data.isFavorited();
+                            imgFav.setOnClickListener(v -> {
+                                if (state) {
+                                    imgFav.setImageResource(R.drawable.ic_baseline_favorite_border_24);
+                                    Snackbar.make(imgFav, "Film Anda telah dihapus dari favorit", Snackbar.LENGTH_LONG).show();
+                                    viewModel.setFavoriteMovie();
+                                } else {
+                                    imgFav.setImageResource(R.drawable.ic_baseline_favorite_24);
+                                    Snackbar.make(imgFav, "Film Anda telah ditambahkan ke favorit", Snackbar.LENGTH_LONG).show();
+                                    viewModel.setFavoriteMovie();
+                                }
+                            });
+                        }
+                        break;
+                    case LOADING:
+                        progressBar.setVisibility(View.VISIBLE);
+                        break;
+                    case ERROR:
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(DetailMovieActivity.this, "Ada Kesalahan Pada Aplikasi", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        });
+
     }
 }

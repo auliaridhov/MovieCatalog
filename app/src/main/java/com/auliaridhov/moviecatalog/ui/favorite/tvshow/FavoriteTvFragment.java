@@ -1,4 +1,4 @@
-package com.auliaridhov.moviecatalog.ui.tvshow;
+package com.auliaridhov.moviecatalog.ui.favorite.tvshow;
 
 import android.os.Bundle;
 
@@ -16,18 +16,11 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.auliaridhov.moviecatalog.R;
-import com.auliaridhov.moviecatalog.data.MoviesEntity;
-import com.auliaridhov.moviecatalog.data.source.local.entity.TvShowLocalEntity;
-import com.auliaridhov.moviecatalog.data.source.remote.response.ResultsItem;
-import com.auliaridhov.moviecatalog.ui.movies.MoviesAdapter;
-import com.auliaridhov.moviecatalog.ui.movies.MoviesViewModel;
-import com.auliaridhov.moviecatalog.utils.EspressoIdlingResource;
+import com.auliaridhov.moviecatalog.ui.tvshow.TvshowAdapter;
+import com.auliaridhov.moviecatalog.ui.tvshow.TvshowViewModel;
 import com.auliaridhov.moviecatalog.viewmodel.ViewModelFactory;
 
-import java.util.List;
-
-
-public class TvshowFragment extends Fragment {
+public class FavoriteTvFragment extends Fragment {
 
     private RecyclerView rvMovie;
     private ProgressBar progressBar;
@@ -51,42 +44,30 @@ public class TvshowFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_tvshow, container, false);
+        return inflater.inflate(R.layout.fragment_favorite_tv, container, false);
     }
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
 
+
             ViewModelFactory factory = ViewModelFactory.getInstance(getActivity());
             TvshowViewModel tvshowViewModel = new ViewModelProvider(this, factory).get(TvshowViewModel.class);
             TvshowAdapter adapter = new TvshowAdapter();
 
             tvshowViewModel.setUsername("auliaridhov");
-            tvshowViewModel.tv.observe(this, movie -> {
+            tvshowViewModel.tvFav.observe(this, movie -> {
                 if (movie != null) {
-                    switch (movie.status) {
-                        case SUCCESS:
-                            progressBar.setVisibility(View.GONE);
-                            adapter.setTvShow(movie.data);
-                            adapter.notifyDataSetChanged();
-                            break;
-                        case LOADING:
-                            progressBar.setVisibility(View.VISIBLE);
-                            break;
-                        case ERROR:
-                            progressBar.setVisibility(View.GONE);
-                            Toast.makeText(getContext(), "Ada Kesalahan Pada Aplikasi", Toast.LENGTH_SHORT).show();
-                            break;
-                    }
+                    progressBar.setVisibility(View.GONE);
+                    adapter.setTvShow(movie);
+                    adapter.notifyDataSetChanged();
                 }
-
             });
 
             rvMovie.setLayoutManager(new LinearLayoutManager(getContext()));
             rvMovie.setHasFixedSize(true);
             rvMovie.setAdapter(adapter);
-
 
         }
     }

@@ -3,6 +3,7 @@ package com.auliaridhov.moviecatalog.data.source;
 import androidx.lifecycle.LiveData;
 
 import com.auliaridhov.moviecatalog.data.source.local.entity.MovieLocalEntity;
+import com.auliaridhov.moviecatalog.data.source.local.entity.TvShowLocalEntity;
 import com.auliaridhov.moviecatalog.data.source.remote.response.ResultsItem;
 import com.auliaridhov.moviecatalog.vo.Resource;
 
@@ -10,29 +11,26 @@ import java.util.List;
 
 public interface MovieDataSource {
 
-//    LiveData<List<ResultsItem>> getAllMovie(String movie);
+
+    LiveData<Resource<List<MovieLocalEntity>>> getAllMovie(String movie);
+
+    LiveData<Resource<MovieLocalEntity>> getDetailMovie(String movie, String idMovie);
+
+    LiveData<Resource<List<TvShowLocalEntity>>> getAllTv(String tv);
+
+    LiveData<Resource<TvShowLocalEntity>> getDetailTv(String tv, String tdTv);
+
+//    LiveData<Resource<PagedList<MovieLocalEntity>>> getAllFavoriteMoviesPaged();
 //
-//    LiveData<ResultsItem> getDetailMovie(String movie, String idMovie);
-//
-//    LiveData<List<ResultsItem>> getAllTv(String tv);
-//
-//    LiveData<ResultsItem> getDetailTv(String tv, String tdTv);
+//    LiveData<Resource<PagedList<TvShowLocalEntity>>> getAllFavoriteTvShowsPaged();
 
-    LiveData<Resource<List<ResultsItem>>> getAllMovie(String movie);
+    void setMovieFavorited(MovieLocalEntity movie, boolean state);
 
-    LiveData<Resource<ResultsItem>> getDetailMovie(String movie, String idMovie);
+    void setTvShowFavorited(TvShowLocalEntity tvshow, boolean state);
 
-    LiveData<Resource<List<ResultsItem>>> getAllTv(String tv);
+    LiveData<List<MovieLocalEntity>> getFavoritedMovies();
 
-    LiveData<Resource<ResultsItem>> getDetailTv(String tv, String tdTv);
+    LiveData<List<TvShowLocalEntity>> getFavoritedTv();
 
-//    LiveData<Resource<List<ModuleEntity>>> getAllModulesByCourse(String courseId);
-//
-//    LiveData<Resource<ModuleEntity>> getContent(String moduleId);
-//
-//    LiveData<List<CourseEntity>> getBookmarkedCourses();
-
-    void setMovieBookmarked(MovieLocalEntity course, boolean state);
-    //void setReadModule(ModuleEntity module);
 
 }

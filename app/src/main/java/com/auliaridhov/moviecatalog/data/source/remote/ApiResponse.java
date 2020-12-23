@@ -14,7 +14,7 @@ import static com.auliaridhov.moviecatalog.data.source.remote.StatusResponse.SUC
 public class ApiResponse<T> {
 
     @NonNull
-    public final StatusResponse status;
+    public final StatusResponse statusResponse;
 
     @Nullable
     public final String message;
@@ -22,25 +22,23 @@ public class ApiResponse<T> {
     @Nullable
     public final T body;
 
-    public ApiResponse(@NonNull StatusResponse status, @Nullable T body, @Nullable String message) {
-        this.status = status;
-        this.body = body;
+    private ApiResponse(@NonNull StatusResponse statusResponse, @Nullable String message, @Nullable T body) {
+        this.statusResponse = statusResponse;
         this.message = message;
+        this.body = body;
     }
 
-    public static <T> ApiResponse<T> success(@Nullable List<ResultsItem> body) {
-        return new ApiResponse<T>(SUCCESS, (T) body, null);
-    }
-    public static <T> ApiResponse<T> detail(@Nullable ResultsItem body) {
-        return new ApiResponse<T>(SUCCESS, (T) body, null);
+    public static <T> ApiResponse success(@Nullable T body) {
+        return new ApiResponse<>(SUCCESS, null, body);
     }
 
-    public static <T> ApiResponse<T> empty(String msg, @Nullable T body) {
-        return new ApiResponse<>(EMPTY, body, msg);
+    public static <T> ApiResponse empty(String message, @Nullable T body) {
+        return new ApiResponse<>(EMPTY, message, body);
     }
 
-    public static <T> ApiResponse<T> error(String msg, @Nullable T body) {
-        return new ApiResponse<>(ERROR, body, msg);
+    public static <T> ApiResponse error(String message, @Nullable T body) {
+        return new ApiResponse<>(ERROR, message, body);
     }
+
 
 }

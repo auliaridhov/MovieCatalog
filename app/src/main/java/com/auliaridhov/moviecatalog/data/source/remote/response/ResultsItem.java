@@ -8,6 +8,10 @@ import com.google.gson.annotations.SerializedName;
 
 public class ResultsItem implements Parcelable {
 
+
+	@SerializedName("id")
+	private int id;
+
 	@SerializedName("overview")
 	private String overview;
 
@@ -26,8 +30,6 @@ public class ResultsItem implements Parcelable {
 	@SerializedName("title")
 	private String title;
 
-	@SerializedName("genre_ids")
-	private List<Integer> genreIds;
 
 	@SerializedName("poster_path")
 	private String posterPath;
@@ -47,8 +49,6 @@ public class ResultsItem implements Parcelable {
 	@SerializedName("popularity")
 	private double popularity;
 
-	@SerializedName("id")
-	private int id;
 
 	@SerializedName("adult")
 	private boolean adult;
@@ -56,26 +56,23 @@ public class ResultsItem implements Parcelable {
 	@SerializedName("vote_count")
 	private int voteCount;
 
-	public ResultsItem(String overview, String originalLanguage, String originalTitle, boolean video,
-					   String title, List<Integer> genreIds, String posterPath, String backdropPath,
-					   String releaseDate, String mediaType, double voteAverage, double popularity,
-					   int id, boolean adult, int voteCount, String originalName) {
+	public ResultsItem(int id, String overview, String originalLanguage, String originalName, String originalTitle, boolean video, String title, String posterPath, String backdropPath, String releaseDate, String mediaType, double voteAverage, double popularity, boolean adult, int voteCount) {
+		this.id = id;
 		this.overview = overview;
 		this.originalLanguage = originalLanguage;
+		this.originalName = originalName;
 		this.originalTitle = originalTitle;
 		this.video = video;
 		this.title = title;
-		this.genreIds = genreIds;
+
 		this.posterPath = posterPath;
 		this.backdropPath = backdropPath;
 		this.releaseDate = releaseDate;
 		this.mediaType = mediaType;
 		this.voteAverage = voteAverage;
 		this.popularity = popularity;
-		this.id = id;
 		this.adult = adult;
 		this.voteCount = voteCount;
-		this.originalName = originalName;
 	}
 
 	public ResultsItem(Parcel in) {
@@ -132,9 +129,6 @@ public class ResultsItem implements Parcelable {
 		return title;
 	}
 
-	public List<Integer> getGenreIds(){
-		return genreIds;
-	}
 
 	public String getPosterPath(){
 		return posterPath;

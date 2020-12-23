@@ -3,10 +3,12 @@ package com.auliaridhov.moviecatalog.data.source.remote;
 import android.os.Handler;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.auliaridhov.moviecatalog.data.source.remote.response.ApiConfig;
+import com.auliaridhov.moviecatalog.data.source.remote.response.ApiService;
 import com.auliaridhov.moviecatalog.data.source.remote.response.MovieResponse;
 import com.auliaridhov.moviecatalog.data.source.remote.response.ResultsItem;
 import com.auliaridhov.moviecatalog.utils.EspressoIdlingResource;
@@ -23,142 +25,139 @@ import retrofit2.Response;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
-public class    RemoteDataSource {
+public class RemoteDataSource {
 
     private static RemoteDataSource INSTANCE;
-    private JsonHelper jsonHelper;
+    private ApiService apiService;
     private Handler handler = new Handler();
     private final long SERVICE_LATENCY_IN_MILLIS = 3000;
     private List<ResultsItem> _listMovies = new ArrayList<ResultsItem>();
     private List<ResultsItem> _listMoviesTv = new ArrayList<ResultsItem>();
     private ResultsItem _detail = null;
 
-    private RemoteDataSource(JsonHelper jsonHelper) {
-        this.jsonHelper = jsonHelper;
+    private RemoteDataSource(ApiService apiService) {
+        this.apiService = apiService;
     }
 
-    public static RemoteDataSource getInstance(JsonHelper helper) {
+    public static RemoteDataSource getInstance(ApiService apiService) {
         if (INSTANCE == null) {
-            INSTANCE = new RemoteDataSource(helper);
+            INSTANCE = new RemoteDataSource(apiService);
         }
         return INSTANCE;
     }
 
-//    public void getList(String type, LoadMovieCallback callback) {
-//
-//        Call<MovieResponse> client = ApiConfig.getApiService().getMovies(type);
-//        client.enqueue(new Callback<MovieResponse>() {
-//            @Override
-//            public void onResponse(@NotNull Call<MovieResponse> call, @NotNull Response<MovieResponse> response) {
-//                if (response.isSuccessful()) {
-//                    if (response.body() != null) {
-//                        _listMovies = response.body().getResults();
-//
-//                    }
-//                } else {
-//                    Log.e(TAG, "onFailure: ${response.message()}");
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(@NotNull Call<MovieResponse> call, @NotNull Throwable t) {
-//                Log.e(TAG, "onFailure: " + t.getMessage());
-//            }
-//        });
-//        handler.postDelayed(()-> callback.onAllMovieReceived(_listMovies), SERVICE_LATENCY_IN_MILLIS);
-//    }
 
+    public LiveData<ApiResponse<List<ResultsItem>>> getList(String type) {
+        EspressoIdlingResource.increment();
+        MutableLiveData<ApiResponse<List<ResultsItem>>> resultMovies = new MutableLiveData<>();
 
-    public LiveData<ApiResponse<List<MovieResponse>>> getList(String type) {
-
-        Call<MovieResponse> client = ApiConfig.getApiService().getMovies(type);
-        client.enqueue(new Callback<MovieResponse>() {
-            @Override
-            public void onResponse(@NotNull Call<MovieResponse> call, @NotNull Response<MovieResponse> response) {
-                if (response.isSuccessful()) {
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            Call<MovieResponse> call = ApiConfig.getApiService().getMovies(type);
+            //Call<MovieResponse> call = apiService.getMovies(BuildConfig.TMDB_API_KEY, LANGUAGE);
+            call.enqueue(new Callback<MovieResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<MovieResponse> call, @NonNull Response<MovieResponse> response) {
                     if (response.body() != null) {
-                        _listMovies = response.body().getResults();
-
+                        resultMovies.setValue(ApiResponse.success(response.body().getResults()));
+                        if (!EspressoIdlingResource.getEspressoIdlingResource().isIdleNow()) {
+                            EspressoIdlingResource.decrement();
+                        }
                     }
-                } else {
-                    Log.e(TAG, "onFailure: ${response.message()}");
                 }
-            }
 
-            @Override
-            public void onFailure(@NotNull Call<MovieResponse> call, @NotNull Throwable t) {
-                Log.e(TAG, "onFailure: " + t.getMessage());
-            }
-        });
-        MutableLiveData<ApiResponse<List<MovieResponse>>> resultMovie = new MutableLiveData<>();
-        handler.postDelayed(()-> resultMovie.setValue(ApiResponse.success(_listMovies))
-        , SERVICE_LATENCY_IN_MILLIS);
+                @Override
+                public void onFailure(@NotNull Call<MovieResponse> call, @NotNull Throwable t) {
+                    EspressoIdlingResource.decrement();
+                }
+            });
+
+        }, SERVICE_LATENCY_IN_MILLIS);
+
+        return resultMovies;
+    }
+
+    public LiveData<ApiResponse<List<ResultsItem>>> getListTv(String type) {
+        EspressoIdlingResource.increment();
+        MutableLiveData<ApiResponse<List<ResultsItem>>> resultMovies = new MutableLiveData<>();
+
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            Call<MovieResponse> call = ApiConfig.getApiService().getMovies(type);
+            //Call<MovieResponse> call = apiService.getMovies(BuildConfig.TMDB_API_KEY, LANGUAGE);
+            call.enqueue(new Callback<MovieResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<MovieResponse> call, @NonNull Response<MovieResponse> response) {
+                    if (response.body() != null) {
+                        resultMovies.setValue(ApiResponse.success(response.body().getResults()));
+                        if (!EspressoIdlingResource.getEspressoIdlingResource().isIdleNow()) {
+                            EspressoIdlingResource.decrement();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(@NotNull Call<MovieResponse> call, @NotNull Throwable t) {
+                    EspressoIdlingResource.decrement();
+                }
+            });
+
+        }, SERVICE_LATENCY_IN_MILLIS);
+
+        return resultMovies;
+    }
+
+
+    public LiveData<ApiResponse<ResultsItem>> getDetailMovie(String type, String id) {
+        EspressoIdlingResource.increment();
+        MutableLiveData<ApiResponse<ResultsItem>> resultMovie = new MutableLiveData<>();
+
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            Call<ResultsItem> call = ApiConfig.getApiService().getDetail(type, id);
+            call.enqueue(new Callback<ResultsItem>() {
+                @Override
+                public void onResponse(@NotNull Call<ResultsItem> call, @NotNull Response<ResultsItem> response) {
+                    resultMovie.setValue(ApiResponse.success(response.body()));
+                    if (!EspressoIdlingResource.getEspressoIdlingResource().isIdleNow()) {
+                        EspressoIdlingResource.decrement();
+                    }
+                }
+
+                @Override
+                public void onFailure(@NotNull Call<ResultsItem> call, @NotNull Throwable t) {
+                    EspressoIdlingResource.decrement();
+                }
+            });
+
+        }, SERVICE_LATENCY_IN_MILLIS);
         return resultMovie;
     }
 
-    public LiveData<ApiResponse<List<MovieResponse>>>  getListTv(String type) {
+    public LiveData<ApiResponse<ResultsItem>> getDetailTv(String type, String id) {
+        EspressoIdlingResource.increment();
+        MutableLiveData<ApiResponse<ResultsItem>> resultMovie = new MutableLiveData<>();
 
-        Call<MovieResponse> client = ApiConfig.getApiService().getMovies(type);
-        client.enqueue(new Callback<MovieResponse>() {
-            @Override
-            public void onResponse(@NotNull Call<MovieResponse> call, @NotNull Response<MovieResponse> response) {
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        _listMoviesTv = response.body().getResults();
-
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            Call<ResultsItem> call = ApiConfig.getApiService().getDetail(type, id);
+            call.enqueue(new Callback<ResultsItem>() {
+                @Override
+                public void onResponse(@NotNull Call<ResultsItem> call, @NotNull Response<ResultsItem> response) {
+                    resultMovie.setValue(ApiResponse.success(response.body()));
+                    if (!EspressoIdlingResource.getEspressoIdlingResource().isIdleNow()) {
+                        EspressoIdlingResource.decrement();
                     }
-                } else {
-                    Log.e(TAG, "onFailure: ${response.message()}");
                 }
-            }
 
-            @Override
-            public void onFailure(@NotNull Call<MovieResponse> call, @NotNull Throwable t) {
-                Log.e(TAG, "onFailure: " + t.getMessage());
-            }
-        });
-        MutableLiveData<ApiResponse<List<MovieResponse>>> resultTv = new MutableLiveData<>();
-        handler.postDelayed(()-> resultTv.setValue(ApiResponse.success(_listMoviesTv))
-                , SERVICE_LATENCY_IN_MILLIS);
-        return resultTv;
-    }
-
-    public LiveData<ApiResponse<List<MovieResponse>>> getDetail(String type, String id) {
-
-        Call<ResultsItem> client = ApiConfig.getApiService().getDetail(type, id);
-        client.enqueue(new Callback<ResultsItem>() {
-            @Override
-            public void onResponse(@NotNull Call<ResultsItem> call, @NotNull Response<ResultsItem> response) {
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        _detail = response.body();
-
-
-                    }
-                } else {
-                    Log.e(TAG, "onFailure: ${response.message()}");
+                @Override
+                public void onFailure(@NotNull Call<ResultsItem> call, @NotNull Throwable t) {
+                    EspressoIdlingResource.decrement();
                 }
-            }
+            });
 
-            @Override
-            public void onFailure(@NotNull Call<ResultsItem> call, @NotNull Throwable t) {
-                Log.e(TAG, "onFailure: " + t.getMessage());
-            }
-        });
-        MutableLiveData<ApiResponse<List<MovieResponse>>> detail = new MutableLiveData<>();
-        handler.postDelayed(()-> detail.setValue(ApiResponse.detail(_detail))
-                , SERVICE_LATENCY_IN_MILLIS);
-        return detail;
-    }
-
-    public interface LoadMovieCallback {
-        void onAllMovieReceived(List<ResultsItem> resultsItemList);
-    }
-    public interface LoadTvCallback {
-        void onAllTvReceived(List<ResultsItem> resultsItemList);
-    }
-    public interface LoadDetailCallback {
-        void onDetailReceived(ResultsItem resultsItem);
+        }, SERVICE_LATENCY_IN_MILLIS);
+        return resultMovie;
     }
 
 }

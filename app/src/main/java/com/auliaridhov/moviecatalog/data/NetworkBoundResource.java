@@ -10,6 +10,10 @@ import com.auliaridhov.moviecatalog.vo.Resource;
 
 import java.util.List;
 
+import static com.auliaridhov.moviecatalog.data.source.remote.StatusResponse.EMPTY;
+import static com.auliaridhov.moviecatalog.data.source.remote.StatusResponse.ERROR;
+import static com.auliaridhov.moviecatalog.data.source.remote.StatusResponse.SUCCESS;
+
 public abstract class NetworkBoundResource<ResultType, RequestType> {
 
     private MediatorLiveData<Resource<ResultType>> result = new MediatorLiveData<>();
@@ -40,13 +44,13 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
 
     protected abstract Boolean shouldFetch(ResultType data);
 
-    protected abstract LiveData<ApiResponse<List<MovieResponse>>> createCall();
+    protected abstract LiveData<ApiResponse<RequestType>> createCall();
 
     protected abstract void saveCallResult(RequestType data);
 
     private void fetchFromNetwork(LiveData<ResultType> dbSource) {
 
-        LiveData<ApiResponse<List<MovieResponse>>> apiResponse = createCall();
+        LiveData<ApiResponse<RequestType>> apiResponse = createCall();
 
         result.addSource(dbSource, newData ->
                 result.setValue(Resource.loading(newData))
@@ -56,11 +60,11 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
             result.removeSource(apiResponse);
             result.removeSource(dbSource);
 
-            switch (response.status) {
+            switch (response.statusResponse) {
                 case SUCCESS:
                     mExecutors.diskIO().execute(() -> {
 
-                        saveCallResult((RequestType) response.body);
+                        saveCallResult(response.body);
 
                         mExecutors.mainThread().execute(() ->
                                 result.addSource(loadFromDB(),

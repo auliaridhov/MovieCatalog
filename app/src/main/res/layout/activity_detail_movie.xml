@@ -34,14 +34,31 @@
                 android:layout_toEndOf="@id/cv1"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/detailTitle"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/title"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:layout_height="wrap_content">
+
+
+                    <TextView
+                        android:layout_toLeftOf="@+id/imgFav"
+                        android:id="@+id/detailTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/title"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_marginEnd="5dp"
+                        android:id="@+id/imgFav"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/ic_baseline_favorite_border_24"
+                        android:layout_alignParentRight="true"/>
+
+                </RelativeLayout>
+
 
                 <TextView
                     android:layout_width="match_parent"

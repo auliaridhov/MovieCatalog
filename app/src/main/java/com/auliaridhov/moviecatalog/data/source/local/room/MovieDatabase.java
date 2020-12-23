@@ -7,8 +7,9 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import com.auliaridhov.moviecatalog.data.source.local.entity.MovieLocalEntity;
+import com.auliaridhov.moviecatalog.data.source.local.entity.TvShowLocalEntity;
 
-@Database(entities = {MovieLocalEntity.class},
+@Database(entities = {MovieLocalEntity.class, TvShowLocalEntity.class},
         version = 1,
         exportSchema = false)
 public abstract class MovieDatabase extends RoomDatabase {

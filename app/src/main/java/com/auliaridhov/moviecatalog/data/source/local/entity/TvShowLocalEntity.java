@@ -1,5 +1,6 @@
 package com.auliaridhov.moviecatalog.data.source.local.entity;
 
+
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -7,8 +8,9 @@ import androidx.room.PrimaryKey;
 
 import java.util.List;
 
-@Entity(tableName = "movie")
-public class MovieLocalEntity {
+@Entity(tableName = "tvshows")
+public class TvShowLocalEntity {
+
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = "id")
@@ -60,7 +62,7 @@ public class MovieLocalEntity {
     @ColumnInfo(name = "favorited")
     private boolean favorited;
 
-    public MovieLocalEntity(int id, String overview, String originalLanguage, String originalName, String originalTitle, boolean video, String title, String posterPath, String backdropPath, String releaseDate, String mediaType, double voteAverage, double popularity, boolean adult, int voteCount, Boolean favorited) {
+    public TvShowLocalEntity(int id, String overview, String originalLanguage, String originalName, String originalTitle, boolean video, String title, String posterPath, String backdropPath, String releaseDate, String mediaType, double voteAverage, double popularity, boolean adult, int voteCount, Boolean favorited) {
         this.id = id;
         this.overview = overview;
         this.originalLanguage = originalLanguage;
@@ -145,6 +147,8 @@ public class MovieLocalEntity {
         this.title = title;
     }
 
+
+
     public String getPosterPath() {
         return posterPath;
     }
@@ -209,3 +213,4 @@ public class MovieLocalEntity {
         this.voteCount = voteCount;
     }
 }
+
