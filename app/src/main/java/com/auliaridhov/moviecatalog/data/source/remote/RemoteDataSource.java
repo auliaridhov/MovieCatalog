@@ -3,6 +3,7 @@ package com.auliaridhov.moviecatalog.data.source.remote;
 import android.os.Handler;
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.auliaridhov.moviecatalog.data.source.remote.response.ApiConfig;
@@ -43,7 +44,32 @@ public class    RemoteDataSource {
         return INSTANCE;
     }
 
-    public void getList(String type, LoadMovieCallback callback) {
+//    public void getList(String type, LoadMovieCallback callback) {
+//
+//        Call<MovieResponse> client = ApiConfig.getApiService().getMovies(type);
+//        client.enqueue(new Callback<MovieResponse>() {
+//            @Override
+//            public void onResponse(@NotNull Call<MovieResponse> call, @NotNull Response<MovieResponse> response) {
+//                if (response.isSuccessful()) {
+//                    if (response.body() != null) {
+//                        _listMovies = response.body().getResults();
+//
+//                    }
+//                } else {
+//                    Log.e(TAG, "onFailure: ${response.message()}");
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(@NotNull Call<MovieResponse> call, @NotNull Throwable t) {
+//                Log.e(TAG, "onFailure: " + t.getMessage());
+//            }
+//        });
+//        handler.postDelayed(()-> callback.onAllMovieReceived(_listMovies), SERVICE_LATENCY_IN_MILLIS);
+//    }
+
+
+    public LiveData<ApiResponse<List<MovieResponse>>> getList(String type) {
 
         Call<MovieResponse> client = ApiConfig.getApiService().getMovies(type);
         client.enqueue(new Callback<MovieResponse>() {
@@ -64,10 +90,13 @@ public class    RemoteDataSource {
                 Log.e(TAG, "onFailure: " + t.getMessage());
             }
         });
-        handler.postDelayed(()-> callback.onAllMovieReceived(_listMovies), SERVICE_LATENCY_IN_MILLIS);
+        MutableLiveData<ApiResponse<List<MovieResponse>>> resultMovie = new MutableLiveData<>();
+        handler.postDelayed(()-> resultMovie.setValue(ApiResponse.success(_listMovies))
+        , SERVICE_LATENCY_IN_MILLIS);
+        return resultMovie;
     }
 
-    public void getListTv(String type, LoadTvCallback callback) {
+    public LiveData<ApiResponse<List<MovieResponse>>>  getListTv(String type) {
 
         Call<MovieResponse> client = ApiConfig.getApiService().getMovies(type);
         client.enqueue(new Callback<MovieResponse>() {
@@ -88,10 +117,13 @@ public class    RemoteDataSource {
                 Log.e(TAG, "onFailure: " + t.getMessage());
             }
         });
-        handler.postDelayed(()-> callback.onAllTvReceived(_listMoviesTv), SERVICE_LATENCY_IN_MILLIS);
+        MutableLiveData<ApiResponse<List<MovieResponse>>> resultTv = new MutableLiveData<>();
+        handler.postDelayed(()-> resultTv.setValue(ApiResponse.success(_listMoviesTv))
+                , SERVICE_LATENCY_IN_MILLIS);
+        return resultTv;
     }
 
-    public void getDetail(String type, String id, LoadDetailCallback callback) {
+    public LiveData<ApiResponse<List<MovieResponse>>> getDetail(String type, String id) {
 
         Call<ResultsItem> client = ApiConfig.getApiService().getDetail(type, id);
         client.enqueue(new Callback<ResultsItem>() {
@@ -113,9 +145,10 @@ public class    RemoteDataSource {
                 Log.e(TAG, "onFailure: " + t.getMessage());
             }
         });
-        handler.postDelayed(()->
-            callback.onDetailReceived(_detail)
-            , SERVICE_LATENCY_IN_MILLIS);
+        MutableLiveData<ApiResponse<List<MovieResponse>>> detail = new MutableLiveData<>();
+        handler.postDelayed(()-> detail.setValue(ApiResponse.detail(_detail))
+                , SERVICE_LATENCY_IN_MILLIS);
+        return detail;
     }
 
     public interface LoadMovieCallback {
